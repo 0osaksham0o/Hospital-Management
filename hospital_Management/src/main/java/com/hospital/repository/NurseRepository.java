@@ -8,25 +8,27 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository for Nurse entity.
- * POST, PUT, DELETE, PATCH handled by NurseController.
- */
+
 @RepositoryRestResource(exported = false)
 public interface NurseRepository extends JpaRepository<Nurse, Integer> {
 
-    // ── By Name ───────────────────────────────────────────────────────────────
 
-    /** Find nurse by exact name. */
     Optional<Nurse> findByName(String name);
 
-    /** Find nurses whose name contains a keyword (case-insensitive). */
     List<Nurse> findByNameContainingIgnoreCase(String namePart);
 
-    // ── By Position ───────────────────────────────────────────────────────────
-
-    /** Find all nurses with a specific position. */
     List<Nurse> findByPosition(String position);
+
+    List<Nurse> findByRegistered(Boolean registered);
+
+    long countByRegistered(Boolean registered);
+
+    Optional<Nurse> findBySsn(Integer ssn);
+
+    boolean existsBySsn(Integer ssn);
+
+//    @Query("SELECT n FROM Nurse n WHERE n.registered = true ORDER BY n.name ASC")
+//    List<Nurse> findAllRegisteredOrderedByName();
 
 
 }
