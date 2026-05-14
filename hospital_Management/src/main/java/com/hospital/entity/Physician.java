@@ -1,0 +1,51 @@
+package com.hospital.entity;
+
+import jakarta.persistence.*;
+
+/**
+ * Entity representing a Physician in the hospital.
+ * Maps to the 'physician' table.
+ */
+@Entity
+@Table(name = "physician")
+public class Physician {
+
+    @Id
+    @Column(name = "EmployeeID", nullable = false, unique = true)
+    private Integer employeeId;
+
+    @Column(name = "Name", nullable = false, length = 30)
+    private String name;
+
+    @Column(name = "Position", nullable = false, length = 30)
+    private String position;
+
+    @Column(name = "SSN", nullable = false)
+    private Integer ssn;
+
+    public Physician() {}
+
+    public Physician(Integer employeeId, String name, String position, Integer ssn) {
+        this.employeeId = employeeId;
+        this.name = name;
+        this.position = position;
+        this.ssn = ssn;
+    }
+
+    public Integer getEmployeeId() { return employeeId; }
+    public void setEmployeeId(Integer employeeId) { this.employeeId = employeeId; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getPosition() { return position; }
+    public void setPosition(String position) { this.position = position; }
+
+    public Integer getSsn() { return ssn; }
+    public void setSsn(Integer ssn) { this.ssn = ssn; }
+
+    @Override
+    public String toString() {
+        return "Physician{employeeId=" + employeeId + ", name=" + name + ", position=" + position + ", ssn=" + ssn + "}";
+    }
+}
