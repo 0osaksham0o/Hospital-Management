@@ -3,8 +3,8 @@ package com.hospital.PatientTests;
 import com.hospital.entity.Patient;
 import com.hospital.entity.Physician;
 import com.hospital.repository.PatientRepository;
-import com.hospital.repository.PhysicianRepository;
 
+import com.hospital.repository.PhysicianRepository;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.hospital.PhysicianTests;
+package com.hospital.ProcedureTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +13,7 @@ import com.hospital.entity.Procedure;
 import com.hospital.repository.ProcedureRepository;
 
 @DataJpaTest
-class ProcedureRepositoryTest {
+class rocedureRepositoryTest {
 
     @Autowired
     private ProcedureRepository procedureRepository;
