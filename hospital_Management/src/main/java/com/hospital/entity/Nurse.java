@@ -5,10 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- * Entity representing a Nurse in the hospital.
- * Maps to the 'nurse' table.
- */
+
 @Entity
 @Table(name = "nurse")
 public class Nurse {
