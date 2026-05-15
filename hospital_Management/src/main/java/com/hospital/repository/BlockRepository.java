@@ -2,9 +2,10 @@ package com.hospital.repository;
 
 import com.hospital.entity.Block;
 import com.hospital.entity.BlockId;
+import com.hospital.projection.BlockProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
@@ -16,27 +17,20 @@ import java.util.List;
 @RepositoryRestResource(path = "blocks")
 public interface BlockRepository extends JpaRepository<Block, BlockId> {
 
+    // ── Projection-based reads ─────────────────────────────────────────────
+    Page<BlockProjection> findAllProjectedBy(Pageable pageable);
+    java.util.Optional<BlockProjection> findProjectedByIdBlockFloorAndIdBlockCode(Integer blockFloor, Integer blockCode);
+
     // ── By Floor ─────────────────────────────────────────────────────────────
 
-    /**
-     * Find all blocks on a given floor.
-     */
     List<Block> findByIdBlockFloor(Integer blockFloor);
 
-    /**
-     * Count blocks on a given floor.
-     */
     long countByIdBlockFloor(Integer blockFloor);
 
     // ── By Code ───────────────────────────────────────────────────────────────
 
-    /**
-     * Find all blocks with a given block code.
-     */
     List<Block> findByIdBlockCode(Integer blockCode);
 
-    /**
-     * Check if a block with a specific code exists on any floor.
-     */
     boolean existsByIdBlockCode(Integer blockCode);
+
 }
