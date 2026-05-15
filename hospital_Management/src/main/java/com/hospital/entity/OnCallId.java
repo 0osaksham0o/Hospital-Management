@@ -1,12 +1,12 @@
 package com.hospital.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-
+/**
+ * Composite Primary Key for the OnCall entity.
+ */
 @Embeddable
 public class OnCallId implements Serializable {
 
@@ -42,8 +42,8 @@ public class OnCallId implements Serializable {
         if (!(o instanceof OnCallId)) return false;
         OnCallId that = (OnCallId) o;
         return Objects.equals(nurseId, that.nurseId) &&
-               Objects.equals(blockFloor, that.blockFloor) &&
-               Objects.equals(blockCode, that.blockCode);
+                Objects.equals(blockFloor, that.blockFloor) &&
+                Objects.equals(blockCode, that.blockCode);
     }
 
     @Override

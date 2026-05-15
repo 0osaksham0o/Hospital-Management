@@ -1,13 +1,10 @@
 package com.hospital.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 
 @Entity
-@Table(name = "nurse")
+@Table(name = "Nurse")
 public class Nurse {
 
     @Id
