@@ -1,18 +1,22 @@
-package com.hospital.repository;
+package com.hospital.AppointmentsTest;
 
 import com.hospital.entity.Appointment;
+import com.hospital.entity.Nurse;
 import com.hospital.entity.Patient;
 import com.hospital.entity.Physician;
+import com.hospital.repository.AppointmentRepository;
+import com.hospital.repository.NurseRepository;
+import com.hospital.repository.PatientRepository;
+import com.hospital.repository.PhysicianRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class AppointmentRepositoryTest {
@@ -21,304 +25,142 @@ class AppointmentRepositoryTest {
     private AppointmentRepository appointmentRepository;
 
     @Autowired
-    private TestEntityManager entityManager;
+    private PatientRepository patientRepository;
 
+    @Autowired
+    private PhysicianRepository physicianRepository;
 
-    // ==========================================
-    // Helper Methods
-    // ==========================================
-
-    private Physician createPhysician(Integer id) {
-
-        Physician physician = new Physician();
-
-        physician.setEmployeeId(id);
-        physician.setName("Doctor " + id);
-        physician.setPosition("Cardiologist");
-        physician.setSsn(1000 + id);
-
-        return entityManager.persist(physician);
-    }
-
-    private Patient createPatient(Integer ssn, Physician physician) {
-
-        Patient patient = new Patient();
-
-        patient.setSsn(ssn);
-        patient.setName("Patient " + ssn);
-        patient.setAddress("Punjab");
-        patient.setPhone("9876543210");
-        patient.setInsuranceId(5000 + ssn);
-
-        patient.setPrimaryCarePhysician(physician);
-
-        return entityManager.persist(patient);
-    }
-
-
-    // ==========================================
-    // TEST CASES
-    // ==========================================
+    @Autowired
+    private NurseRepository nurseRepository;
 
     @Test
-    @DisplayName("findByPatient_Ssn")
-    void testFindByPatientSsn() {
+    @DisplayName("Save and find Appointment by id")
+    void saveAndFindByIdTest() {
+        Appointment appointment = createAndSaveAppointment();
 
-        Physician physician = createPhysician(201);
+        Appointment found = appointmentRepository
+                .findById(appointment.getAppointmentId())
+                .orElse(null);
 
-        Patient patient = createPatient(101, physician);
+        assertThat(found).isNotNull();
+        assertThat(found.getAppointmentId()).isEqualTo(1);
+        assertThat(found.getPatient().getSsn()).isEqualTo(1001);
+        assertThat(found.getPhysician().getEmployeeId()).isEqualTo(2001);
+        assertThat(found.getPrepNurse().getEmployeeId()).isEqualTo(3001);
+    }
 
-        Appointment appointment = new Appointment(
-                1,
-                patient,
-                null,
-                physician,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                "Room-1"
+    @Test
+    @DisplayName("Find Appointment by patient, physician, nurse, and room")
+    void findByPatientPhysicianNurseAndRoomTest() {
+        createAndSaveAppointment();
+
+        List<Appointment> byPatient = appointmentRepository.findByPatient_Ssn(1001);
+        List<Appointment> byPhysician = appointmentRepository.findByPhysician_EmployeeId(2001);
+        List<Appointment> byNurse = appointmentRepository.findByPrepNurse_EmployeeId(3001);
+        List<Appointment> byRoom = appointmentRepository.findByExaminationRoom("Room A");
+
+        assertThat(byPatient).hasSize(1);
+        assertThat(appointmentRepository.countByPatient_Ssn(1001)).isEqualTo(1);
+        assertThat(byPhysician).hasSize(1);
+        assertThat(appointmentRepository.countByPhysician_EmployeeId(2001)).isEqualTo(1);
+        assertThat(byNurse).hasSize(1);
+        assertThat(byRoom).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("Find Appointment by start date range")
+    void findByStartBetweenTest() {
+        Appointment appointment = createAndSaveAppointment();
+
+        List<Appointment> appointments = appointmentRepository.findByStartBetween(
+                appointment.getStart().minusMinutes(30),
+                appointment.getStart().plusMinutes(30)
         );
 
-        entityManager.persist(appointment);
-        entityManager.flush();
-
-        List<Appointment> result =
-                appointmentRepository.findByPatient_Ssn(101);
-
-        assertEquals(1, result.size());
-        assertEquals(101, result.get(0).getPatient().getSsn());
+        assertThat(appointments).hasSize(1);
+        assertThat(appointments.get(0).getAppointmentId()).isEqualTo(1);
     }
 
+    @Test
+    @DisplayName("Find Appointment by patient and physician")
+    void findByPatientAndPhysicianTest() {
+        createAndSaveAppointment();
+
+        List<Appointment> appointments =
+                appointmentRepository.findByPatient_SsnAndPhysician_EmployeeId(1001, 2001);
+
+        assertThat(appointments).hasSize(1);
+        assertThat(appointments.get(0).getPatient().getSsn()).isEqualTo(1001);
+        assertThat(appointments.get(0).getPhysician().getEmployeeId()).isEqualTo(2001);
+    }
 
     @Test
-    @DisplayName("countByPatient_Ssn")
-    void testCountByPatientSsn() {
+    @DisplayName("Find Appointment by physician and start date range")
+    void findByPhysicianAndStartBetweenTest() {
+        Appointment appointment = createAndSaveAppointment();
 
-        Physician physician = createPhysician(202);
+        List<Appointment> appointments =
+                appointmentRepository.findByPhysician_EmployeeIdAndStartBetween(
+                        2001,
+                        appointment.getStart().minusMinutes(30),
+                        appointment.getStart().plusMinutes(30)
+                );
 
-        Patient patient = createPatient(102, physician);
+        assertThat(appointments).hasSize(1);
+        assertThat(appointments.get(0).getPhysician().getEmployeeId()).isEqualTo(2001);
+    }
 
-        Appointment a1 = new Appointment(
+    @Test
+    @DisplayName("Find Appointment with no prep nurse")
+    void findByPrepNurseIsNullTest() {
+        Physician physician = createPhysician(2002, "Dr Null Nurse", "General", 9002);
+        Patient patient = createPatient(1002, "Patient Null Nurse", physician);
+        Appointment appointment = new Appointment(
                 2,
                 patient,
                 null,
                 physician,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                "Room-2"
+                LocalDateTime.of(2026, 5, 15, 12, 0),
+                LocalDateTime.of(2026, 5, 15, 12, 30),
+                "Room B"
         );
+        appointmentRepository.saveAndFlush(appointment);
 
-        Appointment a2 = new Appointment(
-                3,
-                patient,
-                null,
-                physician,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
-                "Room-3"
-        );
+        List<Appointment> appointments = appointmentRepository.findByPrepNurseIsNull();
 
-        entityManager.persist(a1);
-        entityManager.persist(a2);
-
-        entityManager.flush();
-
-        long count =
-                appointmentRepository.countByPatient_Ssn(102);
-
-        assertEquals(2, count);
+        assertThat(appointments).extracting(Appointment::getAppointmentId).contains(2);
     }
 
-
-    @Test
-    @DisplayName("findByPhysician_EmployeeId")
-    void testFindByPhysicianEmployeeId() {
-
-        Physician physician = createPhysician(203);
-
-        Patient patient = createPatient(103, physician);
+    private Appointment createAndSaveAppointment() {
+        Physician physician = createPhysician(2001, "Dr John", "Cardiologist", 9001);
+        Nurse nurse = nurseRepository.save(new Nurse(3001, "Nurse Nancy", "Senior Nurse", true, 8001));
+        Patient patient = createPatient(1001, "Test Patient", physician);
 
         Appointment appointment = new Appointment(
-                4,
+                1,
                 patient,
-                null,
+                nurse,
                 physician,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                "Room-4"
+                LocalDateTime.of(2026, 5, 15, 10, 0),
+                LocalDateTime.of(2026, 5, 15, 10, 30),
+                "Room A"
         );
 
-        entityManager.persist(appointment);
-
-        entityManager.flush();
-
-        List<Appointment> result =
-                appointmentRepository.findByPhysician_EmployeeId(203);
-
-        assertEquals(1, result.size());
+        return appointmentRepository.saveAndFlush(appointment);
     }
 
-
-    @Test
-    @DisplayName("findByPrepNurseIsNull")
-    void testFindByPrepNurseIsNull() {
-
-        Physician physician = createPhysician(204);
-
-        Patient patient = createPatient(104, physician);
-
-        Appointment appointment = new Appointment(
-                5,
-                patient,
-                null,
-                physician,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                "Room-5"
-        );
-
-        entityManager.persist(appointment);
-
-        entityManager.flush();
-
-        List<Appointment> result =
-                appointmentRepository.findByPrepNurseIsNull();
-
-        assertFalse(result.isEmpty());
+    private Physician createPhysician(Integer employeeId, String name, String position, Integer ssn) {
+        return physicianRepository.save(new Physician(employeeId, name, position, ssn));
     }
 
-
-    @Test
-    @DisplayName("findByExaminationRoom")
-    void testFindByExaminationRoom() {
-
-        Physician physician = createPhysician(205);
-
-        Patient patient = createPatient(105, physician);
-
-        Appointment appointment = new Appointment(
-                6,
-                patient,
-                null,
-                physician,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                "ICU-1"
-        );
-
-        entityManager.persist(appointment);
-
-        entityManager.flush();
-
-        List<Appointment> result =
-                appointmentRepository.findByExaminationRoom("ICU-1");
-
-        assertEquals(1, result.size());
-        assertEquals(
-                "ICU-1",
-                result.get(0).getExaminationRoom()
-        );
-    }
-
-
-    @Test
-    @DisplayName("findByStartBetween")
-    void testFindByStartBetween() {
-
-        Physician physician = createPhysician(206);
-
-        Patient patient = createPatient(106, physician);
-
-        LocalDateTime startTime = LocalDateTime.now();
-
-        Appointment appointment = new Appointment(
-                7,
-                patient,
-                null,
-                physician,
-                startTime,
-                startTime.plusHours(1),
-                "Room-7"
-        );
-
-        entityManager.persist(appointment);
-
-        entityManager.flush();
-
-        List<Appointment> result =
-                appointmentRepository.findByStartBetween(
-                        startTime.minusDays(1),
-                        startTime.plusDays(1)
-                );
-
-        assertEquals(1, result.size());
-    }
-
-
-    @Test
-    @DisplayName("findByPatient_SsnAndPhysician_EmployeeId")
-    void testFindByPatientAndPhysician() {
-
-        Physician physician = createPhysician(207);
-
-        Patient patient = createPatient(107, physician);
-
-        Appointment appointment = new Appointment(
-                8,
-                patient,
-                null,
-                physician,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                "Room-8"
-        );
-
-        entityManager.persist(appointment);
-
-        entityManager.flush();
-
-        List<Appointment> result =
-                appointmentRepository
-                        .findByPatient_SsnAndPhysician_EmployeeId(
-                                107,
-                                207
-                        );
-
-        assertEquals(1, result.size());
-    }
-
-
-    @Test
-    @DisplayName("findByPhysician_EmployeeIdAndStartBetween")
-    void testFindByPhysicianAndStartBetween() {
-
-        Physician physician = createPhysician(208);
-
-        Patient patient = createPatient(108, physician);
-
-        LocalDateTime start = LocalDateTime.now();
-
-        Appointment appointment = new Appointment(
-                9,
-                patient,
-                null,
-                physician,
-                start,
-                start.plusHours(1),
-                "Room-9"
-        );
-
-        entityManager.persist(appointment);
-
-        entityManager.flush();
-
-        List<Appointment> result =
-                appointmentRepository
-                        .findByPhysician_EmployeeIdAndStartBetween(
-                                208,
-                                start.minusHours(1),
-                                start.plusHours(2)
-                        );
-
-        assertEquals(1, result.size());
+    private Patient createPatient(Integer ssn, String name, Physician primaryCarePhysician) {
+        return patientRepository.save(new Patient(
+                ssn,
+                name,
+                "Test Address",
+                "9999999999",
+                ssn + 5000,
+                primaryCarePhysician
+        ));
     }
 }

@@ -7,7 +7,7 @@ import jakarta.persistence.*;
  * Maps to the 'block' table.
  */
 @Entity
-@Table(name = "block")
+@Table(name = "Block")
 public class Block {
 
     @EmbeddedId

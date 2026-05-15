@@ -19,23 +19,23 @@ import java.util.Optional;
 @RepositoryRestResource(path = "oncall", excerptProjection = OnCallProjection.class)
 public interface OnCallRepository extends JpaRepository<OnCall, OnCallId> {
 
-    // Projection-based reads
+    // ── Projection-based reads ─────────────────────────────────────────────
     Page<OnCallProjection> findAllProjectedBy(Pageable pageable);
     Optional<OnCallProjection> findProjectedById(OnCallId id);
 
-    // By Nurse
+    // ── By Nurse ──────────────────────────────────────────────────────────────
     List<OnCall> findById_NurseId(Integer nurseId);
     long countById_NurseId(Integer nurseId);
 
-    // By Block
+    // ── By Block ──────────────────────────────────────────────────────────────
     List<OnCall> findById_BlockFloorAndId_BlockCode(Integer blockFloor, Integer blockCode);
     List<OnCall> findById_BlockFloor(Integer blockFloor);
     List<OnCall> findById_BlockCode(Integer blockCode);
 
-    // By Time Window
+    // ── By Time Window ────────────────────────────────────────────────────────
     List<OnCall> findByOnCallStartBetween(LocalDateTime from, LocalDateTime to);
 
-    // Combined
+    // ── Combined ──────────────────────────────────────────────────────────────
     List<OnCall> findById_NurseIdAndId_BlockFloorAndId_BlockCode(Integer nurseId, Integer blockFloor, Integer blockCode);
 
     List<OnCall> findByOnCallStartLessThanEqualAndOnCallEndGreaterThanEqual(

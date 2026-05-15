@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "appointment")
+@Table(name = "Appointment")
 public class Appointment {
 
     @Id
@@ -46,7 +46,7 @@ public class Appointment {
         this.examinationRoom = examinationRoom;
     }
 
-
+    // ── Getters & Setters ────────────────────────────────────────────────────
 
     public Integer getAppointmentId() { return appointmentId; }
     public void setAppointmentId(Integer appointmentId) { this.appointmentId = appointmentId; }

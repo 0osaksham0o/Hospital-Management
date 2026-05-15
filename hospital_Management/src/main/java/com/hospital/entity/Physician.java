@@ -2,12 +2,8 @@ package com.hospital.entity;
 
 import jakarta.persistence.*;
 
-/**
- * Entity representing a Physician in the hospital.
- * Maps to the 'physician' table.
- */
 @Entity
-@Table(name = "physician")
+@Table(name = "Physician")
 public class Physician {
 
     @Id

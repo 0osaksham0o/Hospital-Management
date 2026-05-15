@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="93f927ed-9e71-4099-9c18-31286a49828f" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="67" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+        <option value="package-info" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Humble-Tyrant&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Humble-Tyrant/Hospital-Management.git&quot;,
+    &quot;accountId&quot;: &quot;e6ba983d-15dc-422f-80f8-644f5d02d4cc&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="3DhdWSsYfvykigSIfpRPXlW9JYm" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JUnit.PhysicianRepositoryTest.executor": "Run",
+    "JUnit.PhysicianServiceImplTest.executor": "Run",
+    "JUnit.PhysicianServiceTest.executor": "Run",
+    "JUnit.UndergoesRepositoryTest.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.HospitalManagementApplication.executor": "Run",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "dev",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Gautam/Downloads/hospital_Management/hospital_Management/src/main/java/com/hospital/entity",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Gautam\Downloads\hospital_Management\hospital_Management\src\main\java\com\hospital\entity" />
+      <recent name="C:\Users\Gautam\Downloads\hospital_Management\hospital_Management\src\main\java\com\hospital\repository" />
+      <recent name="C:\Users\Gautam\Downloads\hospital_Management\hospital_Management\src\main\java\com\hospital\exception" />
+      <recent name="C:\Users\Gautam\Downloads\hospital_Management\hospital_Management\src\main\java\com\hospital\service\impl" />
+      <recent name="C:\Users\Gautam\Downloads\hospital_Management\hospital_Management\src\main\java\com\hospital\service" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="PhysicianRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="hospital_Management" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.hospital.PhysicianTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.hospital.PhysicianTests" />
+      <option name="MAIN_CLASS_NAME" value="com.hospital.PhysicianTests.PhysicianRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PhysicianServiceImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="hospital_Management" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.hospital.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.hospital.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.hospital.service.impl.PhysicianServiceImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PhysicianServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="hospital_Management" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.hospital.ProcedureTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.hospital.PhysicianTests" />
+      <option name="MAIN_CLASS_NAME" value="com.hospital.PhysicianTests.PhysicianServiceTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UndergoesRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="hospital_Management" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.hospital.UndergoesTest.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.hospital.UndergoesTest" />
+      <option name="MAIN_CLASS_NAME" value="com.hospital.UndergoesTest.UndergoesRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HospitalManagementApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="hospital_Management" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.hospital.HospitalManagementApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.UndergoesRepositoryTest" />
+        <item itemvalue="JUnit.PhysicianRepositoryTest" />
+        <item itemvalue="JUnit.PhysicianServiceTest" />
+        <item itemvalue="JUnit.PhysicianServiceImplTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="93f927ed-9e71-4099-9c18-31286a49828f" name="Changes" comment="" />
+      <created>1778738266751</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778738266751</updated>
+      <workItem from="1778738267940" duration="6382000" />
+      <workItem from="1778782287946" duration="1826000" />
+      <workItem from="1778824828567" duration="904000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

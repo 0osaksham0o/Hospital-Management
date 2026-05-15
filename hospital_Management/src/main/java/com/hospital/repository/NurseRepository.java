@@ -17,14 +17,14 @@ import java.util.Optional;
 @RepositoryRestResource(exported = false)
 public interface NurseRepository extends JpaRepository<Nurse, Integer> {
 
-    // Projection-based reads
+    // ── Projection-based reads ─────────────────────────────────────────────
     Page<NurseProjection> findAllProjectedBy(Pageable pageable);
     Optional<NurseProjection> findProjectedByEmployeeId(Integer employeeId);
 
-    // Paginated search by name
+    // ── Paginated search by name ───────────────────────────────────────────
     Page<NurseProjection> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    // By Name
+    // ── By Name ───────────────────────────────────────────────────────────────
 
     /** Find nurse by exact name. */
     Optional<Nurse> findByName(String name);
@@ -32,12 +32,12 @@ public interface NurseRepository extends JpaRepository<Nurse, Integer> {
     /** Find nurses whose name contains a keyword (case-insensitive). */
     List<Nurse> findByNameContainingIgnoreCase(String namePart);
 
-    // By Position
+    // ── By Position ───────────────────────────────────────────────────────────
 
     /** Find all nurses with a specific position. */
     List<Nurse> findByPosition(String position);
 
-    // By Registration
+    // ── By Registration ───────────────────────────────────────────────────────
 
     /** Find all registered (or unregistered) nurses. */
     List<Nurse> findByRegistered(Boolean registered);
@@ -45,7 +45,7 @@ public interface NurseRepository extends JpaRepository<Nurse, Integer> {
     /** Count registered nurses. */
     long countByRegistered(Boolean registered);
 
-    // By SSN
+    // ── By SSN ────────────────────────────────────────────────────────────────
 
     /** Find nurse by SSN. */
     Optional<Nurse> findBySsn(Integer ssn);
