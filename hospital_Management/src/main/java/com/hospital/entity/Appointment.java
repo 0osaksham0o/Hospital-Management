@@ -46,7 +46,7 @@ public class Appointment {
         this.examinationRoom = examinationRoom;
     }
 
-    // ── Getters & Setters ────────────────────────────────────────────────────
+
 
     public Integer getAppointmentId() { return appointmentId; }
     public void setAppointmentId(Integer appointmentId) { this.appointmentId = appointmentId; }

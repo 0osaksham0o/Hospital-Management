@@ -1,15 +1,23 @@
 package com.hospital.repository;
 
 import com.hospital.entity.Appointment;
+import com.hospital.projection.AppointmentProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @RepositoryRestResource(exported = false)
 public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
+
+
+    Page<AppointmentProjection> findAllProjectedBy(Pageable pageable);
+    Optional<AppointmentProjection> findProjectedByAppointmentId(Integer appointmentId);
 
 
     List<Appointment> findByPatient_Ssn(Integer patientSsn);
@@ -33,5 +41,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     List<Appointment> findByPatient_SsnAndPhysician_EmployeeId(Integer patientSsn, Integer physicianId);
     List<Appointment> findByPhysician_EmployeeIdAndStartBetween(Integer physicianId, LocalDateTime from, LocalDateTime to);
 
+    List<Appointment> findByPatient_SsnAndStartAfterOrderByStartAsc(Integer patientSsn, LocalDateTime now);
 
+    List<Appointment> findAllByOrderByStartAsc();
 }
