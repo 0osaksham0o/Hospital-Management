@@ -3,14 +3,7 @@ package com.hospital.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * Entity representing an Appointment in the hospital.
- * Maps to the 'appointment' table.
- *
- * Column mapping (PhysicalNamingStrategyStandardImpl — names used verbatim):
- *   - PrepNurse      : FK to Nurse.EmployeeID (nullable)
- *   - ExaminationRoom: TEXT column for the room identifier
- */
+
 @Entity
 @Table(name = "Appointment")
 public class Appointment {
