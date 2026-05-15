@@ -3,6 +3,7 @@ package com.hospital.Nurse;
 import com.hospital.entity.Nurse;
 import com.hospital.repository.NurseRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,42 @@ class NurseRepositoryTest {
 
     @Autowired
     private NurseRepository nurseRepository;
+
+    @BeforeEach
+    void setup() {
+
+        nurseRepository.deleteAll();
+
+        nurseRepository.save(
+                new Nurse(
+                        101,
+                        "Carla Espinosa",
+                        "Head Nurse",
+                        true,
+                        111111110
+                )
+        );
+
+        nurseRepository.save(
+                new Nurse(
+                        102,
+                        "Laverne Roberts",
+                        "Nurse",
+                        true,
+                        222222220
+                )
+        );
+
+        nurseRepository.save(
+                new Nurse(
+                        103,
+                        "Paul Flowers",
+                        "Nurse",
+                        false,
+                        333333330
+                )
+        );
+    }
 
     // 1. findByName(String name)
 
@@ -120,7 +157,6 @@ class NurseRepositoryTest {
     }
 
     // 4. findByRegistered(Boolean registered)
-
 
     @Test
     @DisplayName("Should return all registered nurses")
