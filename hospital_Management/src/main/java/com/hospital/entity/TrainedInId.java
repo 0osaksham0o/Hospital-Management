@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * Composite Primary Key for the TrainedIn entity.
- */
+
 @Embeddable
 public class TrainedInId implements Serializable {
 
