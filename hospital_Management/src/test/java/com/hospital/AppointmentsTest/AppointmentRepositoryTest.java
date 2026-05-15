@@ -1,8 +1,9 @@
-package com.hospital.repository;
+package com.hospital.AppointmentsTest;
 
 import com.hospital.entity.Appointment;
 import com.hospital.entity.Patient;
 import com.hospital.entity.Physician;
+import com.hospital.repository.AppointmentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
