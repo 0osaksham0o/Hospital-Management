@@ -39,8 +39,8 @@ public class UndergoesId implements Serializable {
         if (this == o) return true;
         if (!(o instanceof UndergoesId that)) return false;
         return Objects.equals(patientSsn, that.patientSsn) &&
-               Objects.equals(procedureCode, that.procedureCode) &&
-               Objects.equals(stayId, that.stayId);
+                Objects.equals(procedureCode, that.procedureCode) &&
+                Objects.equals(stayId, that.stayId);
     }
 
     @Override
