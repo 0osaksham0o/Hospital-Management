@@ -39,5 +39,4 @@ public interface BlockRepository extends JpaRepository<Block, BlockId> {
      * Check if a block with a specific code exists on any floor.
      */
     boolean existsByIdBlockCode(Integer blockCode);
-
 }

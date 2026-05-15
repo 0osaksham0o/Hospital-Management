@@ -7,7 +7,7 @@ import jakarta.persistence.*;
  * Maps to the 'physician' table.
  */
 @Entity
-@Table(name = "physician")
+@Table(name = "Physician")
 public class Physician {
 
     @Id
