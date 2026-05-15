@@ -12,12 +12,22 @@ import java.util.Optional;
 @RepositoryRestResource(exported = false)
 public interface PatientRepository extends JpaRepository<Patient, Integer> {
 
-    //By Name
+
     Optional<Patient> findByName(String name);
+    List<Patient> findByNameContainingIgnoreCase(String namePart);
     boolean existsByName(String name);
 
-    List<Patient> findByPrimaryCarePhysician_EmployeeId(Integer physicianId);
 
+    Optional<Patient> findByPhone(String phone);
+    List<Patient> findByAddress(String address);
+
+
+    Optional<Patient> findByInsuranceId(Integer insuranceId);
+    boolean existsByInsuranceId(Integer insuranceId);
+
+
+    List<Patient> findByPrimaryCarePhysician_EmployeeId(Integer physicianId);
+    long countByPrimaryCarePhysician_EmployeeId(Integer physicianId);
 
 
 }
