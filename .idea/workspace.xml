@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="93f927ed-9e71-4099-9c18-31286a49828f" name="Changes" comment="" />
+    <list default="true" id="93f927ed-9e71-4099-9c18-31286a49828f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -62,6 +64,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JUnit.AppointmentRepositoryTest.executor": "Run",
     "JUnit.PhysicianRepositoryTest.executor": "Run",
     "JUnit.PhysicianServiceImplTest.executor": "Run",
     "JUnit.PhysicianServiceTest.executor": "Run",
@@ -98,7 +101,7 @@
       <recent name="C:\Users\Gautam\Downloads\hospital_Management\hospital_Management\src\main\java\com\hospital\service" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Spring Boot.HospitalManagementApplication">
     <configuration name="PhysicianRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="hospital_Management" />
       <extension name="coverage">
@@ -184,7 +187,7 @@
       <updated>1778738266751</updated>
       <workItem from="1778738267940" duration="6382000" />
       <workItem from="1778782287946" duration="1826000" />
-      <workItem from="1778824828567" duration="904000" />
+      <workItem from="1778824828567" duration="1779000" />
     </task>
     <servers />
   </component>
