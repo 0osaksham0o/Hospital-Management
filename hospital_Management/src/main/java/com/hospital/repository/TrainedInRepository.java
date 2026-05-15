@@ -18,6 +18,7 @@ public interface TrainedInRepository extends JpaRepository<TrainedIn, TrainedInI
     List<TrainedIn> findById_PhysicianId(Integer physicianId);
     long countById_PhysicianId(Integer physicianId);
 
+
     List<TrainedIn> findById_TreatmentCode(Integer treatmentCode);
     long countById_TreatmentCode(Integer treatmentCode);
 
@@ -32,3 +33,4 @@ public interface TrainedInRepository extends JpaRepository<TrainedIn, TrainedInI
 
 
 }
+

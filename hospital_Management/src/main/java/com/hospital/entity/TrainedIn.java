@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * Maps to the 'trained_in' table.
  */
 @Entity
-@Table(name = "trained_in")
+@Table(name = "Trained_In")
 public class TrainedIn {
 
     @EmbeddedId
