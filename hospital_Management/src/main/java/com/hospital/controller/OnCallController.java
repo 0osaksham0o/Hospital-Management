@@ -1,4 +1,4 @@
-package com.hospital.Controller;
+package com.hospital.controller;
 
 import com.hospital.entity.*;
 import com.hospital.projection.OnCallProjection;
