@@ -1,4 +1,4 @@
-package com.hospital.Controller;
+package com.hospital.controller;
 
 import com.hospital.entity.*;
 import com.hospital.projection.OnCallProjection;
@@ -22,7 +22,7 @@ import java.util.Map;
  * GET endpoints return OnCallProjection (flat IDs from embedded key).
  * Write body: { "nurseId":1, "blockFloor":1, "blockCode":2,
  *               "onCallStart":"2024-01-01T08:00", "onCallEnd":"2024-01-01T16:00" }
- */
+ */ 3
 @RestController
 @RequestMapping("/api/oncalls")
 @CrossOrigin(origins = "*")

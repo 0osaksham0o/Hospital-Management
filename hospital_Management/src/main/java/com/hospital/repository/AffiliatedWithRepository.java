@@ -1,12 +1,16 @@
 package com.hospital.repository;
 
-import java.util.List;
-
+import com.hospital.entity.AffiliatedWith;
+import com.hospital.entity.AffiliatedWithId;
+import com.hospital.projection.AffiliatedWithProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import com.hospital.entity.AffiliatedWith;
-import com.hospital.entity.AffiliatedWithId;
+import java.util.List;
+import java.util.Optional;
+
 
 
 @RepositoryRestResource(path = "affiliatedwith")
