@@ -12,14 +12,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
 @RepositoryRestResource(path = "undergoes")
 public interface UndergoesRepository extends JpaRepository<Undergoes, UndergoesId> {
 
     Page<UndergoesProjection> findAllProjectedBy(Pageable pageable);
+
     Optional<UndergoesProjection> findProjectedById(UndergoesId id);
 
     List<Undergoes> findById_PatientSsn(Integer patientSsn);
+
     long countById_PatientSsn(Integer patientSsn);
 
     List<Undergoes> findById_ProcedureCode(Integer procedureCode);
@@ -27,13 +28,14 @@ public interface UndergoesRepository extends JpaRepository<Undergoes, UndergoesI
     List<Undergoes> findById_StayId(Integer stayId);
 
     List<Undergoes> findByPhysician_EmployeeId(Integer physicianId);
+
     long countByPhysician_EmployeeId(Integer physicianId);
 
     List<Undergoes> findByAssistingNurse_EmployeeId(Integer nurseId);
 
     List<Undergoes> findByDateUndergoesBetween(LocalDateTime from, LocalDateTime to);
-    List<Undergoes> findByDateUndergoesAfter(LocalDateTime dateTime);
 
+    List<Undergoes> findByDateUndergoesAfter(LocalDateTime dateTime);
 
     List<Undergoes> findById_PatientSsnAndPhysician_EmployeeId(Integer patientSsn, Integer physicianId);
 

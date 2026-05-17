@@ -8,6 +8,7 @@ import com.hospital.exception.ResourceNotFoundException;
 import com.hospital.projection.PatientProjection;
 import com.hospital.repository.PatientRepository;
 import com.hospital.repository.PhysicianRepository;
+import com.hospital.service.AppointmentService;
 import com.hospital.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ public class PatientController {
     @Autowired private PatientService patientService;
     @Autowired private PatientRepository patientRepository;
     @Autowired private PhysicianRepository physicianRepository;
+    @Autowired private AppointmentService appointmentService;
 
     @GetMapping
     public ResponseEntity<Page<PatientProjection>> getAll(@PageableDefault(size = 5) Pageable pageable) {
@@ -75,6 +77,16 @@ public class PatientController {
 
     @DeleteMapping("/{ssn}")
     public ResponseEntity<String> delete(@PathVariable Integer ssn) {
+        patientService.getById(ssn); // 404 if not found
+
+        // Guard: block deletion if the patient has booked appointments
+        long apptCount = appointmentService.countByPatient(ssn);
+        if (apptCount > 0)
+            throw new BadRequestException(
+                    "Cannot delete Patient (SSN: " + ssn + "): patient has "
+                    + apptCount + " booked appointment(s). "
+                    + "Please cancel their appointments first.");
+
         patientService.delete(ssn);
         return ResponseEntity.ok("Patient " + ssn + " deleted successfully.");
     }
@@ -93,7 +105,15 @@ public class PatientController {
         p.setName(body.get("name").toString().trim());
 
         p.setAddress(body.get("address") != null ? body.get("address").toString() : null);
-        p.setPhone(body.get("phone") != null ? body.get("phone").toString() : null);
+
+        // Phone: must be exactly 10 digits
+        if (body.get("phone") != null) {
+            String phone = body.get("phone").toString().trim();
+            if (!phone.matches("\\d{10}"))
+                throw new BadRequestException(
+                        "Incorrect data: 'phone' must be exactly 10 digits, got: \"" + phone + "\".");
+            p.setPhone(phone);
+        }
 
         if (body.get("insuranceId") != null)
             p.setInsuranceId(parseIntField(body, "insuranceId", true));

@@ -1,10 +1,14 @@
 package com.hospital.PatientTests;
 
 import com.hospital.entity.Patient;
+import com.hospital.entity.Physician;
 import com.hospital.repository.PatientRepository;
+import com.hospital.repository.PhysicianRepository;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
@@ -13,115 +17,116 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional
 class PatientRepositoryTest {
 
     @Autowired
     private PatientRepository patientRepository;
 
-    @Test
-    void testGetAllPatientsFromDatabase() {
-        List<Patient> patients = patientRepository.findAll();
+    @Autowired
+    private PhysicianRepository physicianRepository;
 
-        assertFalse(patients.isEmpty());
+    private Physician savedPhysician;
 
-        patients.forEach(patient -> {
-            System.out.println("SSN: " + patient.getSsn());
-            System.out.println("Name: " + patient.getName());
-            System.out.println("Address: " + patient.getAddress());
-            System.out.println("Phone: " + patient.getPhone());
-            System.out.println("Insurance ID: " + patient.getInsuranceId());
+    @BeforeEach
+    void setup() {
+        // Seed a physician then patients in H2
+        savedPhysician = physicianRepository.save(
+                new Physician(1, "Dr. House", "General", 100001));
 
-            if (patient.getPrimaryCarePhysician() != null) {
-                System.out.println("Physician: "
-                        + patient.getPrimaryCarePhysician().getName());
-            }
-
-            System.out.println("----------------------");
-        });
+        patientRepository.save(new Patient(
+                10001, "John Smith", "42 Foobar Lane", "555-0256", 68476213, savedPhysician));
+        patientRepository.save(new Patient(
+                10002, "Jane Johnson", "15 Oak Street", "555-0101", 11223344, savedPhysician));
     }
 
     @Test
-    void testFindExistingPatientByNameFromDatabase() {
-        Optional<Patient> result = patientRepository.findByName("John Smith");
+    @DisplayName("Find all patients - should not be empty after seeding")
+    void testGetAllPatients() {
+        List<Patient> patients = patientRepository.findAll();
+        assertFalse(patients.isEmpty());
+        assertEquals(2, patients.size());
+    }
 
+    @Test
+    @DisplayName("Find patient by exact name")
+    void testFindExistingPatientByName() {
+        Optional<Patient> result = patientRepository.findByName("John Smith");
         assertTrue(result.isPresent());
         assertEquals("John Smith", result.get().getName());
     }
 
     @Test
-    void testCheckExistingPatientNameFromDatabase() {
+    @DisplayName("existsByName returns true for seeded patient")
+    void testCheckExistingPatientName() {
         boolean exists = patientRepository.existsByName("John Smith");
-
         assertTrue(exists);
     }
 
     @Test
-    void testFetchPatientsByExistingPhysicianIdFromDatabase() {
+    @DisplayName("Find patients by primary care physician ID")
+    void testFetchPatientsByPhysicianId() {
         List<Patient> patients =
-                patientRepository.findByPrimaryCarePhysician_EmployeeId(1);
-
+                patientRepository.findByPrimaryCarePhysician_EmployeeId(savedPhysician.getEmployeeId());
         assertFalse(patients.isEmpty());
-
-        patients.forEach(patient ->
-                assertEquals(1, patient.getPrimaryCarePhysician().getEmployeeId())
-        );
+        patients.forEach(p -> assertEquals(savedPhysician.getEmployeeId(),
+                p.getPrimaryCarePhysician().getEmployeeId()));
     }
 
     @Test
-    void testFindPatientsByNameContainingIgnoreCaseFromDatabase() {
+    @DisplayName("Find patients by partial name (case-insensitive)")
+    void testFindPatientsByNameContainingIgnoreCase() {
         List<Patient> patients =
                 patientRepository.findByNameContainingIgnoreCase("john");
-
         assertFalse(patients.isEmpty());
-
-        patients.forEach(patient ->
-                assertTrue(patient.getName().toLowerCase().contains("john"))
-        );
+        patients.forEach(p ->
+                assertTrue(p.getName().toLowerCase().contains("john")));
     }
 
     @Test
-    void testFindExistingPatientByPhoneFromDatabase() {
+    @DisplayName("Find patient by phone number")
+    void testFindPatientByPhone() {
         Optional<Patient> result = patientRepository.findByPhone("555-0256");
-
         assertTrue(result.isPresent());
         assertEquals("555-0256", result.get().getPhone());
     }
 
     @Test
-    void testFindPatientsByAddressFromDatabase() {
+    @DisplayName("Find patients by address")
+    void testFindPatientsByAddress() {
         List<Patient> patients =
                 patientRepository.findByAddress("42 Foobar Lane");
-
         assertFalse(patients.isEmpty());
-
-        patients.forEach(patient ->
-                assertEquals("42 Foobar Lane", patient.getAddress())
-        );
+        patients.forEach(p -> assertEquals("42 Foobar Lane", p.getAddress()));
     }
 
     @Test
-    void testFindExistingPatientByInsuranceIdFromDatabase() {
-        Optional<Patient> result =
-                patientRepository.findByInsuranceId(68476213);
-
+    @DisplayName("Find patient by insurance ID")
+    void testFindPatientByInsuranceId() {
+        Optional<Patient> result = patientRepository.findByInsuranceId(68476213);
         assertTrue(result.isPresent());
         assertEquals(68476213, result.get().getInsuranceId());
     }
 
     @Test
-    void testCheckExistingInsuranceIdFromDatabase() {
-        boolean exists =
-                patientRepository.existsByInsuranceId(68476213);
-
+    @DisplayName("existsByInsuranceId returns true for seeded patient")
+    void testCheckExistingInsuranceId() {
+        boolean exists = patientRepository.existsByInsuranceId(68476213);
         assertTrue(exists);
     }
 
     @Test
-    void testCountPatientsByPhysicianIdFromDatabase() {
-        long count =
-                patientRepository.countByPrimaryCarePhysician_EmployeeId(1);
+    @DisplayName("Count patients by physician ID")
+    void testCountPatientsByPhysicianId() {
+        long count = patientRepository.countByPrimaryCarePhysician_EmployeeId(
+                savedPhysician.getEmployeeId());
+        assertEquals(2, count);
+    }
 
-        assertTrue(count > 0);
+    @Test
+    @DisplayName("Find non-existent patient returns empty")
+    void testFindNonExistentPatient() {
+        Optional<Patient> result = patientRepository.findByName("No Such Patient XYZ");
+        assertFalse(result.isPresent());
     }
 }

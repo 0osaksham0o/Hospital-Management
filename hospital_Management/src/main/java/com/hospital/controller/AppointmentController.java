@@ -55,6 +55,15 @@ public class AppointmentController {
         if (apptId != null && appointmentService.existsById(apptId))
             throw new AlreadyExistsException("Appointment", apptId);
 
+        // Guard: patient must not already have a booking at the same start time
+        Integer ssn = parseIntField(body, "patientSsn", true);
+        if (ssn != null && body.get("start") != null && !body.get("start").toString().isBlank()) {
+            LocalDateTime start = parseDateTime(body.get("start").toString(), "start");
+            if (appointmentRepository.existsByPatient_SsnAndStart(ssn, start))
+                throw new AlreadyExistsException(
+                        "Patient (SSN: " + ssn + ") already has an appointment booked at " + start + ".");
+        }
+
         Appointment saved = appointmentService.save(fromMap(null, body));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(appointmentRepository.findProjectedByAppointmentId(saved.getAppointmentId()).orElseThrow());
@@ -64,6 +73,16 @@ public class AppointmentController {
     public ResponseEntity<AppointmentProjection> update(@PathVariable Integer id,
                                                         @RequestBody Map<String, Object> body) {
         appointmentService.getById(id); // 404 if not found
+
+        // Guard: patient must not already have a *different* booking at the same start time
+        Integer ssn = parseIntField(body, "patientSsn", true);
+        if (ssn != null && body.get("start") != null && !body.get("start").toString().isBlank()) {
+            LocalDateTime start = parseDateTime(body.get("start").toString(), "start");
+            if (appointmentRepository.existsByPatient_SsnAndStartAndAppointmentIdNot(ssn, start, id))
+                throw new AlreadyExistsException(
+                        "Patient (SSN: " + ssn + ") already has an appointment booked at " + start + ".");
+        }
+
         appointmentService.save(fromMap(id, body));
         return ResponseEntity.ok(appointmentRepository.findProjectedByAppointmentId(id).orElseThrow());
     }
@@ -104,11 +123,18 @@ public class AppointmentController {
 
         if (body.get("start") == null || body.get("start").toString().isBlank())
             throw new BadRequestException("Incorrect data: 'start' date-time is required.");
-        a.setStart(parseDateTime(body.get("start").toString(), "start"));
+        LocalDateTime startDt = parseDateTime(body.get("start").toString(), "start");
+        a.setStart(startDt);
 
         if (body.get("end") == null || body.get("end").toString().isBlank())
             throw new BadRequestException("Incorrect data: 'end' date-time is required.");
-        a.setEnd(parseDateTime(body.get("end").toString(), "end"));
+        LocalDateTime endDt = parseDateTime(body.get("end").toString(), "end");
+
+        // Validate end is strictly after start
+        if (!endDt.isAfter(startDt))
+            throw new BadRequestException(
+                    "Incorrect data: 'end' (" + endDt + ") must be after 'start' (" + startDt + ").");
+        a.setEnd(endDt);
 
         if (body.get("examinationRoom") == null || body.get("examinationRoom").toString().isBlank())
             throw new BadRequestException("Incorrect data: 'examinationRoom' is required.");

@@ -1,14 +1,18 @@
 package com.hospital.OnCall;
 
+import com.hospital.entity.Block;
+import com.hospital.entity.BlockId;
+import com.hospital.entity.Nurse;
 import com.hospital.entity.OnCall;
 import com.hospital.entity.OnCallId;
+import com.hospital.repository.BlockRepository;
+import com.hospital.repository.NurseRepository;
 import com.hospital.repository.OnCallRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
@@ -18,15 +22,29 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 class OnCallRepositoryTest {
 
     @Autowired
     private OnCallRepository onCallRepository;
 
+    @Autowired
+    private BlockRepository blockRepository;
+
+    @Autowired
+    private NurseRepository nurseRepository;
+
     @BeforeEach
     void setup() {
+        // Seed Block parent rows (OnCall FK → Block)
+        blockRepository.save(new Block(new BlockId(2, 1)));
+        blockRepository.save(new Block(new BlockId(3, 2)));
+        blockRepository.flush();
+
+        // Seed Nurse parent rows (OnCall FK → Nurse)
+        nurseRepository.save(new Nurse(101, "Nurse-101", "Nurse", true, 10000001));
+        nurseRepository.save(new Nurse(102, "Nurse-102", "Nurse", true, 10000002));
+        nurseRepository.flush();
 
         onCallRepository.deleteAll();
 

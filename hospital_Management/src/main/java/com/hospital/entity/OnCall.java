@@ -15,8 +15,7 @@ public class OnCall {
     private OnCallId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("nurseId")
-    @JoinColumn(name = "Nurse", referencedColumnName = "EmployeeID")
+    @JoinColumn(name = "Nurse", referencedColumnName = "EmployeeID", insertable = false, updatable = false)
     private Nurse nurse;
 
     @ManyToOne(fetch = FetchType.LAZY)

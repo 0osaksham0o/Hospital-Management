@@ -7,7 +7,7 @@ import jakarta.persistence.*;
  * Maps to the 'department' table.
  */
 @Entity
-@Table(name = "department")
+@Table(name = "Department")
 public class Department {
 
     @Id
