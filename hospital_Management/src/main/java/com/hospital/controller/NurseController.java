@@ -5,6 +5,7 @@ import com.hospital.exception.AlreadyExistsException;
 import com.hospital.exception.BadRequestException;
 import com.hospital.projection.NurseProjection;
 import com.hospital.repository.NurseRepository;
+import com.hospital.service.AppointmentService;
 import com.hospital.service.NurseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ public class NurseController {
 
     @Autowired private NurseService nurseService;
     @Autowired private NurseRepository nurseRepository;
+    @Autowired private AppointmentService appointmentService;
 
     @GetMapping
     public ResponseEntity<Page<NurseProjection>> getAll(@PageableDefault(size = 5) Pageable pageable) {
@@ -70,6 +72,16 @@ public class NurseController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
+        nurseService.getById(id); // 404 if not found
+
+        // Guard: block if nurse is assigned as prep nurse for any appointment
+        long apptCount = appointmentService.getByPrepNurse(id).size();
+        if (apptCount > 0)
+            throw new BadRequestException(
+                    "Cannot delete Nurse (ID: " + id + "): nurse is assigned as prep nurse in "
+                    + apptCount + " appointment(s). "
+                    + "Please unassign them from those appointments first.");
+
         nurseService.delete(id);
         return ResponseEntity.ok("Nurse " + id + " deleted successfully.");
     }

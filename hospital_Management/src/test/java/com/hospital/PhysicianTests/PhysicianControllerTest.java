@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.controller.PhysicianController;
 import com.hospital.entity.Physician;
 import com.hospital.projection.PhysicianProjection;
+import com.hospital.repository.PatientRepository;
 import com.hospital.repository.PhysicianRepository;
+import com.hospital.service.AppointmentService;
 import com.hospital.service.PhysicianService;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -46,6 +49,12 @@ class PhysicianControllerTest {
 
     @MockBean
     private PhysicianRepository physicianRepository;
+
+    @MockBean
+    private PatientRepository patientRepository;
+
+    @MockBean
+    private AppointmentService appointmentService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -244,6 +253,11 @@ class PhysicianControllerTest {
     @Test
     @DisplayName("Should delete physician")
     void testDeletePhysician() throws Exception {
+        Physician existing = new Physician(7, "Dr Old", "Pathologist", 777777777);
+        when(physicianService.getById(7)).thenReturn(existing);
+        when(patientRepository.countByPrimaryCarePhysician_EmployeeId(7)).thenReturn(0L);
+        when(appointmentService.countByPhysician(7)).thenReturn(0L);
+
         mockMvc.perform(delete("/api/physicians/7"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Physician 7 deleted successfully."));

@@ -11,13 +11,12 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 import java.util.Optional;
 
-
-
 @RepositoryRestResource(path = "affiliatedwith")
 public interface AffiliatedWithRepository extends JpaRepository<AffiliatedWith, AffiliatedWithId> {
 
     // ── Projection-based reads ─────────────────────────────────────────────
     Page<AffiliatedWithProjection> findAllProjectedBy(Pageable pageable);
+
     Optional<AffiliatedWithProjection> findProjectedById(AffiliatedWithId id);
 
     // ── By Physician ──────────────────────────────────────────────────────────

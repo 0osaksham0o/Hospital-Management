@@ -5,18 +5,14 @@ import com.hospital.controller.MedicationController;
 import com.hospital.entity.Medication;
 import com.hospital.projection.MedicationProjection;
 import com.hospital.repository.MedicationRepository;
+
 import com.hospital.service.MedicationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import org.mockito.Mockito;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import org.springframework.data.domain.*;
-
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,45 +20,39 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-
 import static org.mockito.Mockito.*;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MedicationController.class)
 class MedicationControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
 
-    @MockBean
-    private MedicationService medicationService;
+    @Autowired private MockMvc mockMvc;
+    @MockBean  private MedicationService medicationService;
+    @MockBean  private MedicationRepository medicationRepository;
+    @Autowired private ObjectMapper objectMapper;
 
-    @MockBean
-    private MedicationRepository medicationRepository;
+    // ── Concrete projection (Jackson-serializable, no Mockito proxies) ─────────
+    private MedicationProjection projection(int code, String name, String brand, String desc) {
+        return new MedicationProjection() {
+            public Integer getCode()        { return code;  }
+            public String  getName()        { return name;  }
+            public String  getBrand()       { return brand; }
+            public String  getDescription() { return desc;  }
+        };
+    }
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    // ── Tests ──────────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("Should return paginated medications")
     void testGetAll() throws Exception {
 
-        MedicationProjection projection =
-                Mockito.mock(MedicationProjection.class);
+        MedicationProjection p = projection(1001, "Paracetamol", "Cipla", "Pain relief");
+        Page<MedicationProjection> page = new PageImpl<>(List.of(p), PageRequest.of(0, 5), 1);
 
-        Page<MedicationProjection> page =
-                new PageImpl<>(
-                        List.of(projection),
-                        PageRequest.of(0, 5),
-                        1
-                );
-
-        when(medicationRepository.findAllProjectedBy(any(Pageable.class)))
-                .thenReturn(page);
+        when(medicationRepository.findAllProjectedBy(any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/api/medications"))
                 .andExpect(status().isOk());
@@ -72,11 +62,8 @@ class MedicationControllerTest {
     @DisplayName("Should return medication by code")
     void testGetById() throws Exception {
 
-        MedicationProjection projection =
-                Mockito.mock(MedicationProjection.class);
-
-        when(medicationRepository.findProjectedByCode(1001))
-                .thenReturn(Optional.of(projection));
+        MedicationProjection p = projection(1001, "Paracetamol", "Cipla", "Pain relief");
+        when(medicationRepository.findProjectedByCode(1001)).thenReturn(Optional.of(p));
 
         mockMvc.perform(get("/api/medications/1001"))
                 .andExpect(status().isOk());
@@ -86,8 +73,7 @@ class MedicationControllerTest {
     @DisplayName("Should return 404 when medication not found")
     void testGetByIdNotFound() throws Exception {
 
-        when(medicationRepository.findProjectedByCode(1001))
-                .thenReturn(Optional.empty());
+        when(medicationRepository.findProjectedByCode(1001)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/medications/1001"))
                 .andExpect(status().isNotFound());
@@ -97,30 +83,16 @@ class MedicationControllerTest {
     @DisplayName("Should create medication")
     void testCreateMedication() throws Exception {
 
-        Medication medication = new Medication(
-                1001,
-                "Paracetamol",
-                "Cipla",
-                "Pain relief"
-        );
+        Medication medication = new Medication(1001, "Paracetamol", "Cipla", "Pain relief");
+        MedicationProjection p = projection(1001, "Paracetamol", "Cipla", "Pain relief");
 
-        MedicationProjection projection =
-                Mockito.mock(MedicationProjection.class);
+        when(medicationService.existsById(1001)).thenReturn(false);
+        when(medicationService.save(any(Medication.class))).thenReturn(medication);
+        when(medicationRepository.findProjectedByCode(1001)).thenReturn(Optional.of(p));
 
-        when(medicationService.existsById(1001))
-                .thenReturn(false);
-
-        when(medicationRepository.findProjectedByCode(1001))
-                .thenReturn(Optional.of(projection));
-
-        doNothing().when(medicationService)
-                .save(any(Medication.class));
-
-        mockMvc.perform(
-                        post("/api/medications")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(medication))
-                )
+        mockMvc.perform(post("/api/medications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(medication)))
                 .andExpect(status().isCreated());
     }
 
@@ -128,30 +100,16 @@ class MedicationControllerTest {
     @DisplayName("Should update medication")
     void testUpdateMedication() throws Exception {
 
-        Medication medication = new Medication(
-                1001,
-                "Updated Medicine",
-                "Sun Pharma",
-                "Updated description"
-        );
+        Medication medication = new Medication(1001, "Updated Medicine", "Sun Pharma", "Updated description");
+        MedicationProjection p = projection(1001, "Updated Medicine", "Sun Pharma", "Updated description");
 
-        MedicationProjection projection =
-                Mockito.mock(MedicationProjection.class);
+        when(medicationService.getById(1001)).thenReturn(medication);
+        when(medicationService.save(any(Medication.class))).thenReturn(medication);
+        when(medicationRepository.findProjectedByCode(1001)).thenReturn(Optional.of(p));
 
-        when(medicationService.getById(1001))
-                .thenReturn(medication);
-
-        when(medicationRepository.findProjectedByCode(1001))
-                .thenReturn(Optional.of(projection));
-
-        doNothing().when(medicationService)
-                .save(any(Medication.class));
-
-        mockMvc.perform(
-                        put("/api/medications/1001")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(medication))
-                )
+        mockMvc.perform(put("/api/medications/1001")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(medication)))
                 .andExpect(status().isOk());
     }
 
@@ -159,35 +117,23 @@ class MedicationControllerTest {
     @DisplayName("Should delete medication")
     void testDeleteMedication() throws Exception {
 
-        doNothing().when(medicationService)
-                .delete(1001);
+        doNothing().when(medicationService).delete(1001);
 
         mockMvc.perform(delete("/api/medications/1001"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(
-                        "Medication 1001 deleted successfully."
-                ));
+                .andExpect(content().string("Medication 1001 deleted successfully."));
     }
 
     @Test
     @DisplayName("Should return bad request when name is blank")
     void testCreateMedicationWithoutName() throws Exception {
 
-        Medication medication = new Medication(
-                1001,
-                "",
-                "Cipla",
-                "Description"
-        );
+        Medication medication = new Medication(1001, "", "Cipla", "Description");
+        when(medicationService.existsById(1001)).thenReturn(false);
 
-        when(medicationService.existsById(1001))
-                .thenReturn(false);
-
-        mockMvc.perform(
-                        post("/api/medications")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(medication))
-                )
+        mockMvc.perform(post("/api/medications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(medication)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -195,21 +141,12 @@ class MedicationControllerTest {
     @DisplayName("Should return bad request when brand is blank")
     void testCreateMedicationWithoutBrand() throws Exception {
 
-        Medication medication = new Medication(
-                1001,
-                "Paracetamol",
-                "",
-                "Description"
-        );
+        Medication medication = new Medication(1001, "Paracetamol", "", "Description");
+        when(medicationService.existsById(1001)).thenReturn(false);
 
-        when(medicationService.existsById(1001))
-                .thenReturn(false);
-
-        mockMvc.perform(
-                        post("/api/medications")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(medication))
-                )
+        mockMvc.perform(post("/api/medications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(medication)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -217,21 +154,12 @@ class MedicationControllerTest {
     @DisplayName("Should return conflict when medication already exists")
     void testCreateExistingMedication() throws Exception {
 
-        Medication medication = new Medication(
-                1001,
-                "Paracetamol",
-                "Cipla",
-                "Description"
-        );
+        Medication medication = new Medication(1001, "Paracetamol", "Cipla", "Description");
+        when(medicationService.existsById(1001)).thenReturn(true);
 
-        when(medicationService.existsById(1001))
-                .thenReturn(true);
-
-        mockMvc.perform(
-                        post("/api/medications")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(medication))
-                )
+        mockMvc.perform(post("/api/medications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(medication)))
                 .andExpect(status().isConflict());
     }
 }

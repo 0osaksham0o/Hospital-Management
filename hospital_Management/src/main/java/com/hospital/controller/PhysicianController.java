@@ -4,7 +4,9 @@ import com.hospital.entity.Physician;
 import com.hospital.exception.AlreadyExistsException;
 import com.hospital.exception.BadRequestException;
 import com.hospital.projection.PhysicianProjection;
+import com.hospital.repository.PatientRepository;
 import com.hospital.repository.PhysicianRepository;
+import com.hospital.service.AppointmentService;
 import com.hospital.service.PhysicianService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,8 @@ public class PhysicianController {
 
     @Autowired private PhysicianService physicianService;
     @Autowired private PhysicianRepository physicianRepository;
+    @Autowired private PatientRepository patientRepository;
+    @Autowired private AppointmentService appointmentService;
 
     @GetMapping
     public ResponseEntity<Page<PhysicianProjection>> getAll(@PageableDefault(size = 5) Pageable pageable) {
@@ -72,6 +76,24 @@ public class PhysicianController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
+        physicianService.getById(id); // 404 if not found
+
+        // Guard: block if physician is primary care physician for any patient
+        long patientCount = patientRepository.countByPrimaryCarePhysician_EmployeeId(id);
+        if (patientCount > 0)
+            throw new BadRequestException(
+                    "Cannot delete Physician (ID: " + id + "): " + patientCount
+                    + " patient(s) have this physician as their primary care doctor. "
+                    + "Please reassign those patients first.");
+
+        // Guard: block if physician has booked appointments
+        long apptCount = appointmentService.countByPhysician(id);
+        if (apptCount > 0)
+            throw new BadRequestException(
+                    "Cannot delete Physician (ID: " + id + "): physician has "
+                    + apptCount + " booked appointment(s). "
+                    + "Please cancel those appointments first.");
+
         physicianService.delete(id);
         return ResponseEntity.ok("Physician " + id + " deleted successfully.");
     }

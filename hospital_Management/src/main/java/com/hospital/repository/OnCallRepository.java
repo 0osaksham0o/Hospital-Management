@@ -19,30 +19,35 @@ import java.util.Optional;
 @RepositoryRestResource(path = "oncall", excerptProjection = OnCallProjection.class)
 public interface OnCallRepository extends JpaRepository<OnCall, OnCallId> {
 
-    // ── Projection-based reads ─────────────────────────────────────────────
-    Page<OnCallProjection> findAllProjectedBy(Pageable pageable);
-    Optional<OnCallProjection> findProjectedById(OnCallId id);
+        // ── Projection-based reads ─────────────────────────────────────────────
+        Page<OnCallProjection> findAllProjectedBy(Pageable pageable);
 
-    // ── By Nurse ──────────────────────────────────────────────────────────────
-    List<OnCall> findById_NurseId(Integer nurseId);
-    long countById_NurseId(Integer nurseId);
+        Optional<OnCallProjection> findProjectedById(OnCallId id);
 
-    // ── By Block ──────────────────────────────────────────────────────────────
-    List<OnCall> findById_BlockFloorAndId_BlockCode(Integer blockFloor, Integer blockCode);
-    List<OnCall> findById_BlockFloor(Integer blockFloor);
-    List<OnCall> findById_BlockCode(Integer blockCode);
+        // ── By Nurse ──────────────────────────────────────────────────────────────
+        List<OnCall> findById_NurseId(Integer nurseId);
 
-    // ── By Time Window ────────────────────────────────────────────────────────
-    List<OnCall> findByOnCallStartBetween(LocalDateTime from, LocalDateTime to);
+        long countById_NurseId(Integer nurseId);
 
-    // ── Combined ──────────────────────────────────────────────────────────────
-    List<OnCall> findById_NurseIdAndId_BlockFloorAndId_BlockCode(Integer nurseId, Integer blockFloor, Integer blockCode);
+        // ── By Block ──────────────────────────────────────────────────────────────
+        List<OnCall> findById_BlockFloorAndId_BlockCode(Integer blockFloor, Integer blockCode);
 
-    List<OnCall> findByOnCallStartLessThanEqualAndOnCallEndGreaterThanEqual(
-            LocalDateTime now, LocalDateTime alsoNow);
+        List<OnCall> findById_BlockFloor(Integer blockFloor);
 
-    List<OnCall> findById_NurseIdAndOnCallStartBeforeAndOnCallEndAfter(
-            Integer nurseId, LocalDateTime windowEnd, LocalDateTime windowStart);
+        List<OnCall> findById_BlockCode(Integer blockCode);
 
-    List<OnCall> findAllByOrderByOnCallStartAsc();
+        // ── By Time Window ────────────────────────────────────────────────────────
+        List<OnCall> findByOnCallStartBetween(LocalDateTime from, LocalDateTime to);
+
+        // ── Combined ──────────────────────────────────────────────────────────────
+        List<OnCall> findById_NurseIdAndId_BlockFloorAndId_BlockCode(Integer nurseId, Integer blockFloor,
+                        Integer blockCode);
+
+        List<OnCall> findByOnCallStartLessThanEqualAndOnCallEndGreaterThanEqual(
+                        LocalDateTime now, LocalDateTime alsoNow);
+
+        List<OnCall> findById_NurseIdAndOnCallStartBeforeAndOnCallEndAfter(
+                        Integer nurseId, LocalDateTime windowEnd, LocalDateTime windowStart);
+
+        List<OnCall> findAllByOrderByOnCallStartAsc();
 }

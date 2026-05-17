@@ -8,7 +8,6 @@ import com.hospital.repository.AffiliatedWithRepository;
 import com.hospital.repository.DepartmentRepository;
 import com.hospital.repository.PhysicianRepository;
 import com.hospital.service.AffiliatedWithService;
-
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;

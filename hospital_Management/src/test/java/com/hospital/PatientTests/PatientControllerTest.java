@@ -7,7 +7,9 @@ import com.hospital.entity.Physician;
 import com.hospital.projection.PatientProjection;
 import com.hospital.repository.PatientRepository;
 import com.hospital.repository.PhysicianRepository;
+import com.hospital.service.AppointmentService;
 import com.hospital.service.PatientService;
+
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,9 @@ class PatientControllerTest {
 
     @MockBean
     private PhysicianRepository physicianRepository;
+
+    @MockBean
+    private AppointmentService appointmentService;
 
     private PatientProjection projection() {
         return new PatientProjection() {
@@ -408,29 +413,29 @@ class PatientControllerTest {
     @Test
     void deletePatient_shouldReturnSuccessMessage() throws Exception {
 
-        doNothing().when(patientService)
-                .delete(101);
+        Patient patient = new Patient();
+        patient.setSsn(101);
+        when(patientService.getById(101)).thenReturn(patient);
+        when(appointmentService.countByPatient(101)).thenReturn(0L);
+        doNothing().when(patientService).delete(101);
 
         mockMvc.perform(delete("/api/patients/101"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Patient 101 deleted successfully."));
 
-        verify(patientService, times(1))
-                .delete(101);
+        verify(patientService, times(1)).delete(101);
     }
 
     @Test
     void deletePatient_whenPatientNotFound_shouldReturn404() throws Exception {
 
-        doThrow(new com.hospital.exception.ResourceNotFoundException("Patient", "ID", 999))
-                .when(patientService)
-                .delete(999);
+        when(patientService.getById(999))
+                .thenThrow(new com.hospital.exception.ResourceNotFoundException("Patient", "ID", 999));
 
         mockMvc.perform(delete("/api/patients/999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
 
-        verify(patientService, times(1))
-                .delete(999);
+        verify(patientService, never()).delete(anyInt());
     }
 }

@@ -13,7 +13,7 @@ import com.hospital.entity.Procedure;
 import com.hospital.repository.ProcedureRepository;
 
 @DataJpaTest
-class rocedureRepositoryTest {
+class ProcedureRepositoryTest {
 
     @Autowired
     private ProcedureRepository procedureRepository;

@@ -21,14 +21,17 @@ public interface TrainedInRepository extends JpaRepository<TrainedIn, TrainedInI
 
     // ── Projection-based reads ─────────────────────────────────────────────
     Page<TrainedInProjection> findAllProjectedBy(Pageable pageable);
+
     Optional<TrainedInProjection> findProjectedById(TrainedInId id);
 
     // ── By Physician ──────────────────────────────────────────────────────────
     List<TrainedIn> findById_PhysicianId(Integer physicianId);
+
     long countById_PhysicianId(Integer physicianId);
 
     // ── By Procedure ──────────────────────────────────────────────────────────
     List<TrainedIn> findById_TreatmentCode(Integer treatmentCode);
+
     long countById_TreatmentCode(Integer treatmentCode);
 
     // ── By Certification Date ─────────────────────────────────────────────────
