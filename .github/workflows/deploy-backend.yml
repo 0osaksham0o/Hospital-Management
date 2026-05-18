@@ -1,0 +1,50 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: hospital_Management
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build backend
+        run: |
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key
+          chmod 600 ~/.ssh/ec2_key
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Upload jar
+        run: |
+          scp -i ~/.ssh/ec2_key target/hospital-management-1.0.0.jar \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/hospital-backend.jar
+
+      - name: Restart backend
+        run: |
+          ssh -i ~/.ssh/ec2_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            sudo mv /tmp/hospital-backend.jar /opt/hospital/backend/app.jar
+            sudo chown ubuntu:ubuntu /opt/hospital/backend/app.jar
+            sudo systemctl restart hospital-backend
+            sudo systemctl status hospital-backend --no-pager
+          EOF
